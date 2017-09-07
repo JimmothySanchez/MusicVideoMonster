@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
+    Video window
+
+  <!--   <video id="video" src="file://F:\Projects\electron-quick-start\Media\DIE ANTWOORD - BABY'S ON FIRE (OFFICIAL).mp4" autoplay> -->
+  	<video id="video" webkitallowfullscreen mozallowfullscreen allowfullscreen>
+
+    </video>
+    <a onclick="full()">Full</a>
+  </body>
+  <script type="text/javascript">
+  	const {ipcRenderer} = require('electron')
+  	var video = document.getElementById('video');
+    video.playbackRate = 1;
+
+    ipcRenderer.on('asynchronous-reply', (event, arg) => {
+    	console.log(arg) // prints "pong"
+    })
+
+    
+    ipcRenderer.on('video-load', (event, arg) => {
+      var abspath = __dirname+'\\Media\\'+arg
+    	console.log(abspath) // prints "pong"
+    	var video = document.getElementById('video');
+    	video.src=abspath
+    	video.play();
+    })
+
+    ipcRenderer.on('playfile', (event, arg) => {
+      var abspath = __dirname+'Media/'+arg
+    	console.log(abspath) // prints "pong"
+    	var video = document.getElementById('video');
+    	video.src=abspath
+    	video.play();
+    })
+
+    function full(){
+      var video = document.getElementById('video');
+      video.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+      video.mozRequestFullScreen();
+      video.msRequestFullscreen();
+      video.requestFullscreen();
+    }
+  </script>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Music Video Monster-Video Window</title>
+    </head>
+<body>
+    <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
+    <div>
+        <canvas id="canvas" width="1600" height="900" webkitallowfullscreen mozallowfullscreen allowfullscreen></canvas>
+    </div>
+    <div>
+        <input type="Button"  id="btnFullscreen" value="fullscreen">
+        <!-- <div id="current">0:00</div>
+        <div id="duration">0:00</div> -->
+    </div>
+    <video id="video1" style="display:none;" webkitallowfullscreen mozallowfullscreen allowfullscreen></video>
+    <video id="video2" style="display:none;" webkitallowfullscreen mozallowfullscreen allowfullscreen></video>
+
+    <script>
+        if (typeof module === 'object') {
+            window.module = module;
+            module = undefined;
+        }
+    </script>
+    <script src="node_modules/jquery/dist/jquery.js"></script>
+    <script>
+        if (window.module) module = window.module;
+    </script>
+
+    <script src="lib/Seriously/seriously.js"></script>
+    <script src="lib/Seriously/effects/seriously.vignette.js"></script>
+    <script src="lib/Seriously/effects/seriously.pixelate.js"></script>
+    <script src="lib/Seriously/effects/seriously.ascii.js"></script>
+    <script src="lib/Seriously/effects/seriously.tvglitch.js"></script>
+    <script src="lib/Seriously/effects/seriously.accumulator.js"></script>
+    <script src="lib/Seriously/effects/seriously.filmgrain.js"></script>
+    <script src="lib/Seriously/effects/seriously.invert.js"></script>
+    <script src="OutputController.js"></script>
+
+</body>

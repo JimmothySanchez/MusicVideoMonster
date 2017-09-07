@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html ng-app="Monster-App">
+  <head>
+    <meta charset="UTF-8">
+    <title>Music Video Monster-Control Panel</title>
+    <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.css">
+    <link rel="stylesheet" href="node_modules/bulma/css/bulma.css">
+  </head>
+  <body>
+    <div ng-controller="PlaybackController" ng-init="loadfileList()">
+      <h1>Music Video Monster</h1>
+      <div class="container">
+        <div class="columns">
+          <div class="column is-half">
+            <nav class="panel">
+              <p class="panel-heading">
+                Videos:
+              </p>
+              <a class="panel-block" ng-click="LoadVideo(file.Path)" ng-repeat="file in fileList">{{file.Name}}</a>
+            </nav>
+          </div>
+          <div class="column is-half">
+              <nav class="panel">
+                  <p class="panel-heading">
+                    Effects:
+                  </p>
+                  <a ng-click="sendEffect('ascii')" class="panel-block">ASCII</a>
+                  <a ng-click="sendEffect('pixel')" class="panel-block">Pixelate</a>
+                  <a ng-click="sendEffect('tvglitch')" class="panel-block">Tv Glitch</a>
+                  <a ng-click="sendEffect('none')" class="panel-block">clear</a>
+                  <a ng-click="sendEffect('accumulator')" class="panel-block">accumulator</a>
+                  <a ng-click="sendEffect('filmgrain')" class="panel-block">filmgrain</a>
+                  <a ng-click="sendEffect('invert')" class="panel-block">invert</a>
+              </nav>
+          </div>
+        </div>
+      </div>
+<!--         <ol>
+          <li ng-repeat="file in fileList">
+            <a ng-click="LoadVideo(file.Path)">{{file.Name}}</a>
+          </li>
+        </ol>
+      </div> -->
+<!--       <a ng-click="manualpush()">Load</a>
+      <a ng-click="sendEffect('ascii')">ASCII</a>
+      <a ng-click="sendEffect('pixel')">Pixelate</a>
+      <a ng-click="sendEffect('tvglitch')">Tv Glitch</a>
+      <a ng-click="sendEffect('none')">clear</a>
+      <a ng-click="sendEffect('accumulator')">accumulator</a>
+      <a ng-click="sendEffect('filmgrain')">filmgrain</a>
+      <a ng-click="sendEffect('invert')">invert</a> -->
+    
+  </body>
+  <script src="node_modules/angular/angular.js"></script>
+  <script src="PlaybackController.js"></script>
+
+
+
+</html>
