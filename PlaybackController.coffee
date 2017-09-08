@@ -40,9 +40,9 @@ app.controller('PlaybackController',($scope)->
         $scope.fileList.push('yo')
 
     $scope.LoadVideo = (FilePath)->
-        ipcRenderer.send('video-load', FilePath)
+        ipcRenderer.send('stage-video', FilePath)
 
-    ipcRenderer.on('request-video', (event, arg) => {
-                ipcRenderer.send('stage-video', $scope.fileList[33])
-            })
+    ipcRenderer.on('request-video', (event, arg) =>
+        ipcRenderer.send('stage-video', $scope.fileList[33])
+    )
 )

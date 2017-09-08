@@ -1,146 +1,162 @@
 $(document).ready(()->
-    ipcRenderer = require('electron')
-    fadeOutTime = 2
+    seriously = new Seriously()
+
+    ###Global Vars###
+    video1 = $('#video1')
+    video2 = $('#video2')
+    canvas = $('#canvas')
+    seriously = new Seriously()
+    reformat = seriously.transform('reformat')
+    vignette = seriously.effect("vignette")
+    tvGlitch = null
+    blend = seriously.effect('blend')
+    {ipcRenderer} = require('electron')
+    effectList = []
+    
+    ###Runtime flags ###
+    clock = 0
+    activeVideoIndex = 0
+    inTransition = false
+    transitionStartTime = 0
+    glitchOn = false
+
+    ##Static Defaults
+    fadeOutTime = 5000
+    tickInterval = 100
+
+
+
+    debug = ()->
+        abspath = 'G:\\Projects\\YoutubeDownload\\'
+        $("#opacity").on('input',()->
+           ## blend.opacity = $("#opacity").val()
+        )
+        video1[0].src = abspath+'Alex Gaudino feat. Crystal Waters - Destination Calabria [Explicit Version] [Official Video].mp4'
+        video1[0].load()
+        video1[0].addEventListener("canplaythrough",()->
+            @play()
+        )
+        video2[0].src = abspath+'Major Lazer – Light it Up (feat. Nyla & Fuse ODG) [Music Video Remix] by Method Studios.mp4'
+        video2[0].load()
+        video2[0].addEventListener("canplaythrough",()->
+            @play()
+        )
+        video1[0].volume=0
+        video2[0].volume=0
+        transitionStartTime = clock
+        activeVideoIndex =2
+        inTransition = true
+
+
 
     init = ()->
-        dostuff =1
+        video1[0].playbackRate = 1
+        video2[0].playbackRate = 1
+        target = seriously.target('#canvas')
+        reformat.width = target.width
+        reformat.height = target.height
+        reformat.mode = 'cover'
+        #reformat.source = seriously.source('#video1')
+        blend.bottom = seriously.source('#video1')
+        blend.top = seriously.source('#video2')
+
+        vignette.source = blend
+        reformat.source = vignette
+        #effectList.push(vin)
+        #reformat.source = blend
+        target.source = reformat;
+        seriously.go()
+        window.setInterval(onTick,tickInterval)
+        setTimeout(startGlitch, 10000+Math.random()*60000)
+
+    $('#btnFullscreen').click(()->
+        canvas[0].webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT)
+    )
 
     $('#video').on("timeupdate",()->
         dostuff =1
     )
+
+    ipcRenderer.on('video-load', (event, arg) => 
+        abspath = 'G:\\Projects\\YoutubeDownload\\' + arg
+        video1[0].src = abspath
+        video1[0].load()
+        video1[0].addEventListener("canplaythrough",()->
+            @play()
+        )
+    )
+
+    ipcRenderer.on('stage-video', (event, arg) => 
+        console.log('staging')
+        transitionWindow()
+        abspath = 'G:\\Projects\\YoutubeDownload\\' + arg
+        if(activeVideoIndex ==1)
+            video1[0].src = abspath
+            video1[0].load()
+            video1[0].addEventListener("canplaythrough",()->
+                @play()
+            )
+        else
+            video2[0].src = abspath
+            video2[0].load()
+            video2[0].addEventListener("canplaythrough",()->
+                @play()
+            )
+    )
+
+    startGlitch=()->
+        tvGlitch = seriously.effect('tvglitch')
+        tvGlitch.source =vignette
+        reformat.source =tvGlitch
+        setTimeout(endGlitch, Math.random()*1000)
+
+    endGlitch=()->
+        reformat.source = vignette
+        tvGlitch.destroy()
+        tvGlitch = null
+        setTimeout(startGlitch, 10000+Math.random()*60000)
+
+    transitionWindow = ()->
+        inTransition = true
+        transitionStartTime = clock
+        if(activeVideoIndex == 1)
+            activeVideoIndex = 2
+        else
+            activeVideoIndex = 1
+
+
+    onTick = ()->
+        clock = clock+tickInterval
+        if(inTransition)
+            updateTransitions()
+        updateVignette()
+
+    updateVignette=()->
+        vignette.amount = 1+2*Math.sin(clock/12000)+Math.random()/2
+
+    updateTransitions=()->
+        currentDuration = clock-transitionStartTime
+        if(currentDuration>=fadeOutTime)
+            if(activeVideoIndex ==1)
+                blend.opacity = 0
+                video1[0].volume=1
+                video2[0].volume=0
+            else
+                blend.opacity =1
+                video1[0].volume=0
+                video2[0].volume=1
+            blend.inTransition = false
+        else
+            alpha =(clock-transitionStartTime)/fadeOutTime
+            if(activeVideoIndex ==1)
+                blend.opacity = 1-alpha
+                video1[0].volume=alpha
+                video2[0].volume=1-alpha
+            else
+                blend.opacity =alpha
+                video1[0].volume=1-alpha
+                video2[0].volume=alpha
+
+    init()
+    ##debug()
 )
-
-
-    # <script>
-    #     $(document).ready(function () {
-    #         const {ipcRenderer} = require('electron')
-    #         var video, canvas, seriously, reformat;
-    #         const fadeOutTime = 2;
-
-    #         $("#video").on("timeupdate", function (event) {
-    #             onTrackedVideoFrame(this.currentTime, this.duration);
-    #         });
-
-    #         function init() {
-    #             video = $('#video');
-    #             video[0].playbackRate = 1;
-    #             canvas = $('#canvas');
-    #             seriously = new Seriously();
-    #             reformat = seriously.transform('reformat');
-    #             var target = seriously.target('#canvas');
-    #             reformat.width = target.width;
-    #             reformat.height = target.height;
-    #             reformat.mode = 'cover';
-    #             reformat.source = seriously.source('#video');
-    #             target.source = reformat;
-
-    #             $('#btnFullscreen').click(function(){
-    #                 canvas[0].webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
-    #             });
-
-    #             seriously.go();
-    #         }
-
-    #         function effect_ascii(invar, outvar) {
-    #             var ascii = seriously.effect('ascii');
-    #             ascii.source = invar;
-    #             outvar.source = ascii;
-    #         }
-
-    #         function effect_pixel(invar, outvar) {
-    #             var pixel = seriously.effect('pixelate');
-    #             pixel.source = invar;
-    #             outvar.source = pixel;
-    #         }
-
-    #         function effect_none(invar, outvar) {
-    #             outvar.source = invar;
-    #         }
-
-    #         function effect_tvglitch(invar, outvar) {
-    #             var effect = seriously.effect('tvglitch');
-    #             effect.source = invar;
-    #             outvar.source = effect;
-    #         }
-
-    #         function effect_filmgrain(invar, outvar) {
-    #             var effect = seriously.effect('filmgrain');
-    #             effect.source = invar;
-    #             outvar.source = effect;
-    #         }
-
-    #         function effect_invert(invar, outvar) {
-    #             var effect = seriously.effect('invert');
-    #             effect.source = invar;
-    #             outvar.source = effect;
-    #         }
-
-    #         function effect_accumulator(invar, outvar) {
-    #             console.log('accumulator effect')
-    #             var effect = seriously.effect('accumulator');
-    #             effect.source = invar;
-    #             effect.opacity = .5;
-    #             effect.blendMode = "normal";
-    #             outvar.source = effect;
-    #         }
-
-    #         ipcRenderer.on('video-param', (event, arg) => {
-    #             console.log(arg);
-    #             if (arg.fullscreen == true) {
-    #                 full()
-    #             }
-    #             if (arg.effect != null) {
-    #                 switch (arg.effect.type) {
-    #                     case "ascii":
-    #                         effect_ascii(seriously.source('#video'), reformat);
-    #                         break;
-    #                     case "pixel":
-    #                         effect_pixel(seriously.source('#video'), reformat);
-    #                         break;
-    #                     case "tvglitch":
-    #                         effect_tvglitch(seriously.source('#video'), reformat);
-    #                         break;
-    #                     case "accumulator":
-    #                         effect_accumulator(seriously.source('#video'), reformat);
-    #                         break;
-    #                     case "filmgrain":
-    #                         effect_filmgrain(seriously.source('#video'), reformat);
-    #                         break;
-    #                     case "invert":
-    #                         effect_invert(seriously.source('#video'), reformat);
-    #                         break;
-    #                     default:
-    #                         effect_none(seriously.source('#video'), reformat);
-    #                 }
-
-    #             }
-    #         })
-
-
-    #         ipcRenderer.on('video-load', (event, arg) => {
-    #             var abspath = 'G:\\Projects\\YoutubeDownload\\' + arg
-    #             console.log(abspath) // prints "pong"
-    #             //var video = document.getElementById('video');
-    #             video[0].src = abspath
-    #             console.log(video)
-    #             video[0].load();
-    #             video[0].addEventListener("canplaythrough",function(){
-    #                 this.play();
-    #             });
-    #         })
-
-    #         ipcRenderer.on('asynchronous-reply', (event, arg) => {
-    #             console.log(arg) // prints "pong"
-    #         })
-
-    #         function onTrackedVideoFrame(currentTime, duration) {
-    #             $("#current").text(currentTime);
-    #             $("#duration").text(duration);
-    #             if(duration-currentTime<=fadeOutTime)
-    #             {
-    #                 ipcRenderer.send('request-video', true);
-    #             }
-    #         }
-    #         init();
-    #     });
-    # </script>

@@ -75,6 +75,10 @@ ipcMain.on('video-load', (event, arg) => {
   //event.sender.send('asynchronous-reply', 'pong')
 })
 
+ipcMain.on('stage-video', (event, arg) => {
+  videoWindow.send('stage-video', arg)
+})
+
 ipcMain.on('request-video', (event, arg) => {
   mainWindow.send('request-video', arg)
 })
