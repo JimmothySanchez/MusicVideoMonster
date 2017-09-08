@@ -3,3 +3,9 @@ node_modules
 lib/Seriously/
 
 lib/npm-debug\.log
+
+PlaybackController\.js
+
+MonsterSave\.txt
+
+OutputController\.js

@@ -16,12 +16,30 @@
               <p class="panel-heading">
                 Videos:
               </p>
-              <a class="panel-block" ng-click="LoadVideo(file.Path)" ng-repeat="file in fileList">{{file.Name}}</a>
+              <ul dnd-list="fileList">
+                <li ng-repeat="file in fileList" dnd-draggable="file"
+                dnd-moved="fileList.splice($index, 1)"
+                dnd-effect-allowed="move"
+                dnd-selected="selectedVideo = file"
+                ng-class="{'selected': selectedVideo === file}">
+                {{file.Name}}
+                </li>
+              </ul>
+              <!-- <a class="panel-block" ng-click="LoadVideo(file.Path)" ng-repeat="file in fileList">{{file.Name}}</a> -->
             </nav>
           </div>
           <div class="column is-half">
               <nav class="panel">
                   <p class="panel-heading">
+                      Details:
+                  </p>
+                  <div>
+                    <label for="txtstartTime">Start Time:</label>
+                    <input type="text" id="txtstartTime" ng-bind="selectedVideo.StartTime">
+                    <a ng-click="manualpush()">click me</a>
+                    <a ng-click="save()">save</a>
+                  </div>
+<!--                   <p class="panel-heading">
                     Effects:
                   </p>
                   <a ng-click="sendEffect('ascii')" class="panel-block">ASCII</a>
@@ -30,7 +48,7 @@
                   <a ng-click="sendEffect('none')" class="panel-block">clear</a>
                   <a ng-click="sendEffect('accumulator')" class="panel-block">accumulator</a>
                   <a ng-click="sendEffect('filmgrain')" class="panel-block">filmgrain</a>
-                  <a ng-click="sendEffect('invert')" class="panel-block">invert</a>
+                  <a ng-click="sendEffect('invert')" class="panel-block">invert</a> -->
               </nav>
           </div>
         </div>
@@ -52,8 +70,56 @@
     
   </body>
   <script src="node_modules/angular/angular.js"></script>
+  <script src="node_modules/angular-drag-and-drop-lists/angular-drag-and-drop-lists.js"></script>
   <script src="PlaybackController.js"></script>
+  <style>
+    /**
+ * The dnd-list should always have a min-height,
+ * otherwise you can't drop to it once it's empty
+ */
+.simpleDemo ul[dnd-list] {
+    min-height: 42px;
+    padding-left: 0px;
+}
 
+/**
+ * The dndDraggingSource class will be applied to
+ * the source element of a drag operation. It makes
+ * sense to hide it to give the user the feeling
+ * that he's actually moving it.
+ */
+.simpleDemo ul[dnd-list] .dndDraggingSource {
+    display: none;
+}
 
+/**
+ * An element with .dndPlaceholder class will be
+ * added to the dnd-list while the user is dragging
+ * over it.
+ */
+.simpleDemo ul[dnd-list] .dndPlaceholder {
+    background-color: #ddd;
+    display: block;
+    min-height: 42px;
+}
+
+.simpleDemo ul[dnd-list] li {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: -1px;
+}
+
+/**
+ * Show selected elements in green
+ */
+.simpleDemo ul[dnd-list] li.selected {
+    background-color: #dff0d8;
+    color: #3c763d;
+}
+  </style>
 
 </html>
