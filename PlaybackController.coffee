@@ -5,18 +5,23 @@ app.controller('PlaybackController',($scope)->
 
     fs = require("fs")
     $scope.selectedVideo = null
+    $scope.playingVideo = null
     $scope.fileList = []
     $scope.Test = "This is stills a test"
 
     $scope.fullScreen = ()->
-        console.log('send param')
         ipcRenderer.send('video-param', JSON.parse('{"fullscreen":true}'))
 
     $scope.Clearlist= ()->
          $scope.fileList = []
 
     $scope.addRecord = (path)->
-        tempRecord = {"Name":path.split('/').pop(),"Path":path}
+        filename = path.split('/').pop()
+        arrnames = filename.split(' - ')
+        bandname = arrnames[0]
+        if(arrnames.length>1)
+            songname = arrnames[1]
+        tempRecord = {"SongName":songname,"BandName" :bandname,"Path":path,"selected":false}
         $scope.fileList.push(tempRecord)
 
     $scope.loadfileList = ()->
@@ -26,8 +31,14 @@ app.controller('PlaybackController',($scope)->
             angular.forEach(dir, (value,key)->
                 $scope.addRecord(value);
             )
+            $scope.$apply();
         )
 
+    $scope.selectRecord = (file)->
+        if($scope.selectedVideo !=null)
+            $scope.selectedVideo.selected = false
+        $scope.selectedVideo = file
+        file.selected = true
 
     $scope.sendEffect = (name)->
         param = 
@@ -39,8 +50,10 @@ app.controller('PlaybackController',($scope)->
     $scope.manualpush = ()->
         $scope.fileList.push('yo')
 
-    $scope.LoadVideo = (FilePath)->
-        ipcRenderer.send('stage-video', FilePath)
+    $scope.PlayVideo = (video)->
+        console.log(video)
+        ipcRenderer.send('stage-video', video)
+        $scope.playingVideo = video
 
     $scope.test =()->
         console.log('test')
@@ -52,7 +65,13 @@ app.controller('PlaybackController',($scope)->
             console.log(e)
             alert('Failed to save the file !')
 
+    $scope.playNext=()->
+        console.log('vieo over')
+        nextvideo =  $scope.fileList[$scope.fileList.indexOf($scope.playingVideo)+1]
+        ipcRenderer.send('stage-video', nextvideo)
+        $scope.playingVideo = nextvideo
+
     ipcRenderer.on('request-video', (event, arg) =>
-        ipcRenderer.send('stage-video', $scope.fileList[33])
+        $scope.playNext()
     )
 )

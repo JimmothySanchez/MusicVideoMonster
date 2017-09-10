@@ -19,6 +19,7 @@ $(document).ready(()->
     inTransition = false
     transitionStartTime = 0
     glitchOn = false
+    durationCheck = false
 
     ##Static Defaults
     fadeOutTime = 5000
@@ -78,7 +79,7 @@ $(document).ready(()->
     )
 
     ipcRenderer.on('video-load', (event, arg) => 
-        abspath = 'G:\\Projects\\YoutubeDownload\\' + arg
+        abspath = 'G:\\Projects\\YoutubeDownload\\' + arg.Path
         video1[0].src = abspath
         video1[0].load()
         video1[0].addEventListener("canplaythrough",()->
@@ -89,20 +90,35 @@ $(document).ready(()->
     ipcRenderer.on('stage-video', (event, arg) => 
         console.log('staging')
         transitionWindow()
-        abspath = 'G:\\Projects\\YoutubeDownload\\' + arg
+        abspath = 'G:\\Projects\\YoutubeDownload\\' + arg.Path
         if(activeVideoIndex ==1)
             video1[0].src = abspath
             video1[0].load()
             video1[0].addEventListener("canplaythrough",()->
                 @play()
+                durationCheck = true
             )
         else
             video2[0].src = abspath
             video2[0].load()
             video2[0].addEventListener("canplaythrough",()->
                 @play()
+                durationCheck = true
             )
     )
+
+    checkDurationContitions=()->
+        if(durationCheck)
+            if(activeVideoIndex ==1)
+                if(video1[0].duration-video1[0].currentTime<=fadeOutTime/1000)
+                    console.log video1[0].duration
+                    console.log video1[0].currentTime
+                    ipcRenderer.send('request-video', true)
+                    durationCheck = false
+            else
+                if(video2[0].duration-video2[0].currentTime<=fadeOutTime/1000)
+                    ipcRenderer.send('request-video', true)
+                    durationCheck = false
 
     startGlitch=()->
         tvGlitch = seriously.effect('tvglitch')
@@ -124,12 +140,12 @@ $(document).ready(()->
         else
             activeVideoIndex = 1
 
-
     onTick = ()->
         clock = clock+tickInterval
         if(inTransition)
             updateTransitions()
         updateVignette()
+        checkDurationContitions()
 
     updateVignette=()->
         vignette.amount = 1+2*Math.sin(clock/12000)+Math.random()/2

@@ -1,45 +1,109 @@
 <!DOCTYPE html>
 <html ng-app="Monster-App">
-  <head>
-    <meta charset="UTF-8">
-    <title>Music Video Monster-Control Panel</title>
-    <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.css">
-    <link rel="stylesheet" href="node_modules/bulma/css/bulma.css">
-  </head>
-  <body>
-    <div ng-controller="PlaybackController" ng-init="loadfileList()">
-      <h1>Music Video Monster</h1>
-      <div class="container">
-        <div class="columns">
-          <div class="column is-half">
-            <nav class="panel">
-              <p class="panel-heading">
-                Videos:
-              </p>
-              <ul dnd-list="fileList">
-                <li ng-repeat="file in fileList" dnd-draggable="file"
-                dnd-moved="fileList.splice($index, 1)"
-                dnd-effect-allowed="move"
-                dnd-selected="selectedVideo = file"
-                ng-class="{'selected': selectedVideo === file}">
-                {{file.Name}}
-                </li>
-              </ul>
-              <!-- <a class="panel-block" ng-click="LoadVideo(file.Path)" ng-repeat="file in fileList">{{file.Name}}</a> -->
-            </nav>
-          </div>
-          <div class="column is-half">
-              <nav class="panel">
-                  <p class="panel-heading">
-                      Details:
-                  </p>
-                  <div>
-                    <label for="txtstartTime">Start Time:</label>
-                    <input type="text" id="txtstartTime" ng-bind="selectedVideo.StartTime">
-                    <a ng-click="manualpush()">click me</a>
-                    <a ng-click="save()">save</a>
-                  </div>
-<!--                   <p class="panel-heading">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Music Video Monster-Control Panel</title>
+  <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.css">
+  <link rel="stylesheet" href="node_modules/bulma/css/bulma.css">
+</head>
+
+<body>
+  <div ng-controller="PlaybackController" ng-init="loadfileList()">
+    <section class="hero is-small is-dark is-bold">
+      <div class="hero-body">
+        <div class="container">
+          <h1 class="title">
+            Music Video Monster
+          </h1>
+          <h2 class="subtitle">
+            Halloween 2017
+          </h2>
+        </div>
+      </div>
+    </section>
+    <div class="container  is-fullhd">
+      <nav class="level">
+        <div class="level-item">
+          <a class="button" id="btnPrevious"><i class="fa fa-step-backward" aria-hidden="true"></i></a>
+        </div>
+        <div class="level-item">
+          <a class="button" id="btnPrevious"><i class="fa fa-play" aria-hidden="true"></i></a>
+        </div>
+        <div class="level-item">
+          <a class="button" id="btnPrevious"><i class="fa fa-pause" aria-hidden="true"></i></a>
+        </div>
+        <div class="level-item">
+          <a class="button" id="btnPrevious"><i class="fa fa-step-forward" aria-hidden="true" ng-click="playNext()"></i></a>
+        </div>
+      </nav>
+      <div class="columns">
+        <div class="column is-three-quarters">
+          <nav class="panel">
+            <p class="panel-heading">
+              Videos:
+            </p>
+            <ul dnd-list="fileList">
+              <li ng-repeat="file in fileList" dnd-draggable="file" dnd-moved="fileList.splice($index, 1)" dnd-effect-allowed="move" ng-class="{'selected': selectedVideo == file}">
+                <div class="notification" ng-class="{'is-info': file.selected}" ng-click="selectRecord(file)">
+                  <article class="media">
+                    <figure class="media-left">
+                        {{$index}}
+                      <!-- <p class="image is-64x64">
+                        <img src="http://bulma.io/images/placeholders/128x128.png"> 
+                      </p> -->
+                    </figure>
+                    <div class="media-content">
+                      <div class="content">
+                        <p>
+                          <strong>{{file.BandName}}</strong>: <small>{{file.SongName}}</small>
+                          <br>
+                        </p>
+                      </div>
+                    </div>
+                    <div class="media-right">
+                      <a class="button" id="btnPrevious"><i class="fa fa-play" aria-hidden="true" ng-click="PlayVideo(file)"></i></a>
+                    </div>
+                  </article>
+                </div>
+                <!-- <div class="box">
+                  {{file.Name}}
+                  <a ng-click="LoadVideo(file.Path)" class="button">Play</a>
+                </div> -->
+              </li>
+            </ul>
+            <!-- <a class="panel-block" ng-click="LoadVideo(file.Path)" ng-repeat="file in fileList">{{file.Name}}</a> -->
+          </nav>
+        </div>
+        <div class="column">
+          <nav class="panel">
+            <p class="panel-heading">
+              Details:
+            </p>
+            <div>
+              <div class="field">
+                <label>Band Name</label>
+                <div class="control">
+                  <input class="input" type="text" ng-model="selectedVideo.BandName">
+                </div>
+              </div>
+              <div class="field">
+                <label>Song Name:</label>
+                <div class="control">
+                  <input class="input" type="text" ng-model="selectedVideo.SongName">
+                </div>
+              </div>
+              <div class="field">
+                <label for="txtstartTime">Start Time:</label>
+                <div class="control">
+                  <input type="text" id="txtstartTime" ng-model="selectedVideo.StartTime">
+                </div>
+              </div>
+              <div class="control">
+                <a class="button" ng-click="save()">save</a>
+              </div>
+            </div>
+            <!--                   <p class="panel-heading">
                     Effects:
                   </p>
                   <a ng-click="sendEffect('ascii')" class="panel-block">ASCII</a>
@@ -49,17 +113,17 @@
                   <a ng-click="sendEffect('accumulator')" class="panel-block">accumulator</a>
                   <a ng-click="sendEffect('filmgrain')" class="panel-block">filmgrain</a>
                   <a ng-click="sendEffect('invert')" class="panel-block">invert</a> -->
-              </nav>
-          </div>
+          </nav>
         </div>
       </div>
-<!--         <ol>
+    </div>
+    <!--         <ol>
           <li ng-repeat="file in fileList">
             <a ng-click="LoadVideo(file.Path)">{{file.Name}}</a>
           </li>
         </ol>
       </div> -->
-<!--       <a ng-click="manualpush()">Load</a>
+    <!--       <a ng-click="manualpush()">Load</a>
       <a ng-click="sendEffect('ascii')">ASCII</a>
       <a ng-click="sendEffect('pixel')">Pixelate</a>
       <a ng-click="sendEffect('tvglitch')">Tv Glitch</a>
@@ -67,43 +131,44 @@
       <a ng-click="sendEffect('accumulator')">accumulator</a>
       <a ng-click="sendEffect('filmgrain')">filmgrain</a>
       <a ng-click="sendEffect('invert')">invert</a> -->
-    
-  </body>
-  <script src="node_modules/angular/angular.js"></script>
-  <script src="node_modules/angular-drag-and-drop-lists/angular-drag-and-drop-lists.js"></script>
-  <script src="PlaybackController.js"></script>
-  <style>
-    /**
+
+</body>
+<script src="node_modules/angular/angular.js"></script>
+<script src="node_modules/angular-drag-and-drop-lists/angular-drag-and-drop-lists.js"></script>
+<script src="PlaybackController.js"></script>
+<style>
+  /**
  * The dnd-list should always have a min-height,
  * otherwise you can't drop to it once it's empty
  */
-.simpleDemo ul[dnd-list] {
+
+  .simpleDemo ul[dnd-list] {
     min-height: 42px;
     padding-left: 0px;
-}
-
-/**
+  }
+  /**
  * The dndDraggingSource class will be applied to
  * the source element of a drag operation. It makes
  * sense to hide it to give the user the feeling
  * that he's actually moving it.
  */
-.simpleDemo ul[dnd-list] .dndDraggingSource {
-    display: none;
-}
 
-/**
+  .simpleDemo ul[dnd-list] .dndDraggingSource {
+    display: none;
+  }
+  /**
  * An element with .dndPlaceholder class will be
  * added to the dnd-list while the user is dragging
  * over it.
  */
-.simpleDemo ul[dnd-list] .dndPlaceholder {
+
+  .simpleDemo ul[dnd-list] .dndPlaceholder {
     background-color: #ddd;
     display: block;
     min-height: 42px;
-}
+  }
 
-.simpleDemo ul[dnd-list] li {
+  .simpleDemo ul[dnd-list] li {
     background-color: #fff;
     border: 1px solid #ddd;
     border-top-right-radius: 4px;
@@ -111,15 +176,15 @@
     display: block;
     padding: 10px 15px;
     margin-bottom: -1px;
-}
-
-/**
+  }
+  /**
  * Show selected elements in green
  */
-.simpleDemo ul[dnd-list] li.selected {
+
+  .simpleDemo ul[dnd-list] li.selected {
     background-color: #dff0d8;
     color: #3c763d;
-}
-  </style>
+  }
+</style>
 
 </html>
