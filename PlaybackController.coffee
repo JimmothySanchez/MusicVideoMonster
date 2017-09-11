@@ -34,6 +34,12 @@ app.controller('PlaybackController',($scope)->
             $scope.$apply();
         )
 
+    $scope.genSort=()->
+        gen = new GeneticSort($scope.fileList)
+        $scope.fileList=[]
+        $scope.fileList = gen.GetSortedArray()
+        console.log($scope.fileList)
+
     $scope.selectRecord = (file)->
         if($scope.selectedVideo !=null)
             $scope.selectedVideo.selected = false
