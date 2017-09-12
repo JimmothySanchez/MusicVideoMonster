@@ -38,7 +38,7 @@
         </div>
       </nav>
       <div class="columns">
-        <div class="column is-three-quarters">
+        <div class="column is-one-third">
           <nav class="panel">
             <p class="panel-heading">
               Videos:
@@ -48,7 +48,7 @@
                 <div class="notification" ng-class="{'is-info': file.selected}" ng-click="selectRecord(file)">
                   <article class="media">
                     <figure class="media-left">
-                        {{$index}}
+                      {{$index}}
                       <!-- <p class="image is-64x64">
                         <img src="http://bulma.io/images/placeholders/128x128.png"> 
                       </p> -->
@@ -75,7 +75,18 @@
             <!-- <a class="panel-block" ng-click="LoadVideo(file.Path)" ng-repeat="file in fileList">{{file.Name}}</a> -->
           </nav>
         </div>
-        <div class="column">
+        <div class="column is-one-third">
+          <nav class="panel">
+            <p class="panel-heading">
+              Videos:
+            </p>
+            <ul dnd-list="PlayList">
+              <li ng-repeat="file in fileList" dnd-draggable="file" dnd-moved="fileList.splice($index, 1)" dnd-effect-allowed="move" ng-class="{'selected': selectedVideo == file}">
+                </li>
+            </ul>
+            </nav>
+        </div>
+        <div class="column is-one-third">
           <nav class="panel">
             <p class="panel-heading">
               Details:
@@ -97,6 +108,25 @@
                 <label for="txtstartTime">Start Time:</label>
                 <div class="control">
                   <input type="text" id="txtstartTime" ng-model="selectedVideo.StartTime">
+                </div>
+                <div>
+                  <label>Tags</label>
+                  <div>
+                    <labal for="chkRap">Rap</labal>
+                    <input type="checkbox" value="Rap" id="chkRap" ng-model="selectedVideo.Tags.Rap">
+                  </div>
+                  <div>
+                    <labal for="chkMetal">Metal</labal>
+                    <input type="checkbox" value="Metal" id="chkMetal" ng-model="selectedVideo.Tags.Metal">
+                  </div>
+                  <div>
+                    <labal for="chkForeign">Foreign</labal>
+                    <input type="checkbox" value="Foreign" id="chkForeign" ng-model="selectedVideo.Tags.Foreign">
+                  </div>
+                  <div>
+                    <labal for="chkSpoof">Foreign</labal>
+                    <input type="checkbox" value="Spoof" id="chkSpoof" ng-model="selectedVideo.Tags.Spoof">
+                  </div>
                 </div>
               </div>
               <div class="control">

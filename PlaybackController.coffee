@@ -6,14 +6,15 @@ app.controller('PlaybackController',($scope)->
     fs = require("fs")
     $scope.selectedVideo = null
     $scope.playingVideo = null
-    $scope.fileList = []
+    $scope.PlayList = []
+    $scope.fileList =[]
     $scope.Test = "This is stills a test"
 
     $scope.fullScreen = ()->
         ipcRenderer.send('video-param', JSON.parse('{"fullscreen":true}'))
 
     $scope.Clearlist= ()->
-         $scope.fileList = []
+         $scope.PlayList = []
 
     $scope.addRecord = (path)->
         filename = path.split('/').pop()
@@ -22,7 +23,7 @@ app.controller('PlaybackController',($scope)->
         if(arrnames.length>1)
             songname = arrnames[1]
         tempRecord = {"SongName":songname,"BandName" :bandname,"Path":path,"selected":false}
-        $scope.fileList.push(tempRecord)
+        $scope.PlayList.push(tempRecord)
 
     $scope.loadfileList = ()->
         $scope.Clearlist()
@@ -35,10 +36,10 @@ app.controller('PlaybackController',($scope)->
         )
 
     $scope.genSort=()->
-        gen = new GeneticSort($scope.fileList)
-        $scope.fileList=[]
-        $scope.fileList = gen.GetSortedArray()
-        console.log($scope.fileList)
+        gen = new GeneticSort($scope.PlayList)
+        $scope.PlayList=[]
+        $scope.PlayList = gen.GetSortedArray()
+        console.log($scope.PlayList)
 
     $scope.selectRecord = (file)->
         if($scope.selectedVideo !=null)
@@ -73,7 +74,7 @@ app.controller('PlaybackController',($scope)->
 
     $scope.playNext=()->
         console.log('vieo over')
-        nextvideo =  $scope.fileList[$scope.fileList.indexOf($scope.playingVideo)+1]
+        nextvideo =  $scope.PlayList[$scope.PlayList.indexOf($scope.playingVideo)+1]
         ipcRenderer.send('stage-video', nextvideo)
         $scope.playingVideo = nextvideo
 
