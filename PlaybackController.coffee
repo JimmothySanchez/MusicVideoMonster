@@ -6,7 +6,7 @@ app.controller('PlaybackController',($scope)->
     fs = require("fs")
     $scope.selectedVideo = null
     $scope.playingVideo = null
-    $scope.PlayList = []
+    ##$scope.PlayList = []
     $scope.fileList =[]
     $scope.Test = "This is stills a test"
 
@@ -14,7 +14,12 @@ app.controller('PlaybackController',($scope)->
         ipcRenderer.send('video-param', JSON.parse('{"fullscreen":true}'))
 
     $scope.Clearlist= ()->
-         $scope.PlayList = []
+         $scope.fileList = []
+
+    $scope.ClearSelected = ()->
+        $scope.selectedVideo = null
+        for video in $scope.fileList
+            video.selected = false
 
     $scope.addRecord = (path)->
         filename = path.split('/').pop()
@@ -22,10 +27,22 @@ app.controller('PlaybackController',($scope)->
         bandname = arrnames[0]
         if(arrnames.length>1)
             songname = arrnames[1]
-        tempRecord = {"SongName":songname,"BandName" :bandname,"Path":path,"selected":false}
-        $scope.PlayList.push(tempRecord)
+        tempRecord = 
+            SongName:songname
+            BandName :bandname
+            Path:path
+            selected:false
+            Tags:
+                Rap: false
+                Metal: false
+                Foreign: false
+                Spoof:false
+                FiveStar: false
+                Halloween:false
 
-    $scope.loadfileList = ()->
+        $scope.fileList.push(tempRecord)
+
+    $scope.loadFromdirectory = ()->
         $scope.Clearlist()
         ##$scope.fileList.push({"Name":i,"Path":i}) for i in [1..10]
         fs.readdir('G:\\Projects\\YoutubeDownload', (err, dir) =>
@@ -34,12 +51,34 @@ app.controller('PlaybackController',($scope)->
             )
             $scope.$apply();
         )
+    $scope.RemoveSelectedRecord = ()->
+        $scope.fileList.pop($scope.selectedVideo)
+        index = $scope.fileList.indexOf($scope.selectedVideo)
+        if(index>-1)
+            $scope.fileList.splice(index,1)
+            $scope.selectedVideo = null
+
+    $scope.loadFromJSON = ()->
+        console.log('start')
+        fs.readFile('MonsterSave.txt', 'utf-8', (err, data) => 
+            if(err)
+                alert("Whit went wrong: "+ err.message)
+                return
+            $scope.Clearlist()
+            templist = JSON.parse(data)
+            console.log(templist)
+            $scope.ClearSelected()
+            $scope.fileList = templist
+            $scope.$apply()
+        )
 
     $scope.genSort=()->
-        gen = new GeneticSort($scope.PlayList)
-        $scope.PlayList=[]
-        $scope.PlayList = gen.GetSortedArray()
-        console.log($scope.PlayList)
+        gen = new GeneticSort($scope.fileList)
+        $scope.ClearSelected()
+        $scope.fileList=[]
+        $scope.fileList = gen.GetSortedArray()
+
+        console.log($scope.fileList)
 
     $scope.selectRecord = (file)->
         if($scope.selectedVideo !=null)
@@ -52,15 +91,17 @@ app.controller('PlaybackController',($scope)->
             effect:
                 type:name
         ipcRenderer.send('video-param',param)
-    
 
-    $scope.manualpush = ()->
-        $scope.fileList.push('yo')
+    updatePlayingVieoUI = (video)->
+        if($scope.playingVideo)
+            $scope.playingVideo.playing = null
+        $scope.playingVideo = video
+        $scope.playingVideo.playing = true
 
     $scope.PlayVideo = (video)->
         console.log(video)
         ipcRenderer.send('stage-video', video)
-        $scope.playingVideo = video
+        updatePlayingVieoUI(video)
 
     $scope.test =()->
         console.log('test')
@@ -74,9 +115,9 @@ app.controller('PlaybackController',($scope)->
 
     $scope.playNext=()->
         console.log('vieo over')
-        nextvideo =  $scope.PlayList[$scope.PlayList.indexOf($scope.playingVideo)+1]
+        nextvideo =  $scope.fileList[$scope.fileList.indexOf($scope.playingVideo)+1]
         ipcRenderer.send('stage-video', nextvideo)
-        $scope.playingVideo = nextvideo
+        updatePlayingVieoUI(nextvideo)
 
     ipcRenderer.on('request-video', (event, arg) =>
         $scope.playNext()

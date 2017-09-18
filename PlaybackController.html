@@ -9,7 +9,7 @@
 </head>
 
 <body>
-  <div ng-controller="PlaybackController" ng-init="loadfileList()">
+  <div ng-controller="PlaybackController">
     <section class="hero is-small is-dark is-bold">
       <div class="hero-body">
         <div class="container">
@@ -23,12 +23,12 @@
       </div>
     </section>
     <div class="container  is-fullhd">
-      <nav class="level">
+      <nav class="level is-one-half">
         <div class="level-item">
           <a class="button" id="btnPrevious"><i class="fa fa-step-backward" aria-hidden="true"></i></a>
         </div>
         <div class="level-item">
-          <a class="button" id="btnPrevious"><i class="fa fa-play" aria-hidden="true"></i></a>
+          <a class="button is-success" id="btnPrevious"><i class="fa fa-play" aria-hidden="true"></i></a>
         </div>
         <div class="level-item">
           <a class="button" id="btnPrevious"><i class="fa fa-pause" aria-hidden="true"></i></a>
@@ -38,7 +38,7 @@
         </div>
       </nav>
       <div class="columns">
-        <div class="column is-one-third">
+        <div class="column" ng-show="fileList.length>0">
           <nav class="panel">
             <p class="panel-heading">
               Videos:
@@ -62,7 +62,7 @@
                       </div>
                     </div>
                     <div class="media-right">
-                      <a class="button" id="btnPrevious"><i class="fa fa-play" aria-hidden="true" ng-click="PlayVideo(file)"></i></a>
+                      <a class="button  is-success" id="btnPlay"><i class="fa fa-play" aria-hidden="true" ng-click="PlayVideo(file)"></i></a>
                     </div>
                   </article>
                 </div>
@@ -75,7 +75,11 @@
             <!-- <a class="panel-block" ng-click="LoadVideo(file.Path)" ng-repeat="file in fileList">{{file.Name}}</a> -->
           </nav>
         </div>
-        <div class="column is-one-third">
+        <div class="column" ng-show="fileList.length <=0 ">
+            <a class="button is-info" ng-click="loadFromdirectory()">Load files from directory</a>
+            <a class="button is-info" ng-click="loadFromJSON()">Load files from JSON</a>
+        </div>
+        <!-- <div class="column is-one-third">
           <nav class="panel">
             <p class="panel-heading">
               Videos:
@@ -85,7 +89,7 @@
                 </li>
             </ul>
             </nav>
-        </div>
+        </div> -->
         <div class="column is-one-third">
           <nav class="panel">
             <p class="panel-heading">
@@ -105,10 +109,18 @@
                 </div>
               </div>
               <div class="field">
-                <label for="txtstartTime">Start Time:</label>
+                <label for="txtInBuffer">In Buffer:</label>
                 <div class="control">
-                  <input type="text" id="txtstartTime" ng-model="selectedVideo.StartTime">
+                  <input type="number" id="txtInBuffer" ng-model="selectedVideo.InBuffer">
                 </div>
+              </div>
+              <div class="field">
+                <label for="txtOutBuffer">Out Buffer:</label>
+                <div class="control">
+                  <input type="number" id="txtOutBuffer" ng-model="selectedVideo.OutBuffer">
+                </div>
+              </div>
+              <div class="field">
                 <div>
                   <label>Tags</label>
                   <div>
@@ -124,11 +136,23 @@
                     <input type="checkbox" value="Foreign" id="chkForeign" ng-model="selectedVideo.Tags.Foreign">
                   </div>
                   <div>
-                    <labal for="chkSpoof">Foreign</labal>
+                    <labal for="chkSpoof">Spoof</labal>
                     <input type="checkbox" value="Spoof" id="chkSpoof" ng-model="selectedVideo.Tags.Spoof">
+                  </div>
+                  <div>
+                    <labal for="chkFiveStar">5 Star</labal>
+                    <input type="checkbox" value="FiveStar" id="chkSpoof" ng-model="selectedVideo.Tags.FiveStar">
+                  </div>
+                  <div>
+                    <labal for="chkFiveStar">Halloween</labal>
+                    <input type="checkbox" value="Halloween" id="chkHalloween" ng-model="selectedVideo.Tags.Halloween">
                   </div>
                 </div>
               </div>
+              <div>
+                <a class="button is-danger" ng-click="RemoveSelectedRecord()">Remove</a>
+              </div>
+              <hr>
               <div class="control">
                 <a class="button" ng-click="save()">save</a>
                 <a class="button" ng-click="genSort()">Randomize</a>
