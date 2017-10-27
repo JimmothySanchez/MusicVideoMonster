@@ -2,7 +2,7 @@ class GeneticSort
     constructor:(@inputList)->
         console.log('start')
         @GenrationSize = 200
-        @NumberOfGenerations =15
+        @NumberOfGenerations =200
         @PercentOfRecordsToMutate = 10
         @PercentageLevelOfMutation = 40
 
@@ -12,6 +12,7 @@ class GeneticSort
             console.log('Generation: '+i)
             @_getGenerationTotalHealth()
             console.log('determined health')
+            @_GetBest(@generation)
             @_getNextGeneration()
             console.log('Get next gen')
             @_mutate()
@@ -38,49 +39,64 @@ class GeneticSort
     _getGenerationTotalHealth:()->
         @totalHealth = 0
         for specimen in @generation
+            specimen.health = @_checkHealth(specimen.pool)
             @totalHealth = @totalHealth + specimen.health
 
     _initilizePool:()->
         @generation = []
         for i in [1..@GenrationSize]
-            specimen = @_shuffle(@inputList)
-            @generation.push({"health":@_checkHealth(specimen),"pool":specimen})
+            specimenPool = @_shuffle(@inputList)
+            @generation.push({"health":@_checkHealth(specimenPool),"pool":specimenPool})
 
     _getNextGeneration:()->
         tempGen = []
         for specimen in @generation
-            specimen.relativeHealth = (specimen.health/@totalHealth)/@GenrationSize
-            for i in [1..specimen.relativeHealth]
+            specimen.relativeHealth = (specimen.health/@totalHealth)*100
+            if(tempGen.length<@GenrationSize)
+                ##you get the first one free
                 tempGen.push(angular.extend({},specimen))
+                for i in [1..specimen.relativeHealth]
+                    if(tempGen.length<@GenrationSize)
+                        tempGen.push(angular.extend({},specimen))
         @generation = tempGen
 
     _mutate:()->
         recordcount = (@PercentOfRecordsToMutate/100) * @GenrationSize
         for i in [1..recordcount]
-            RandomPlaylistIndex = Math.floor(Math.random() * @GenrationSize)
+            RandomPlaylistIndex = Math.floor(Math.random() * @generation.length)
             chosenPlaylist = @generation[RandomPlaylistIndex]
-            MutationCount = (@PercentageLevelOfMutation/100)*chosenPlaylist.length
+            MutationCount = (@PercentageLevelOfMutation/100)*chosenPlaylist.pool.length
             for j in [1..MutationCount]
-                randomIndex1 = Math.floor(Math.random() * @GenrationSize)
-                randomIndex2 = Math.floor(Math.random() * @GenrationSize)
+                randomIndex1 = Math.floor(Math.random() * @inputList.length)
+                randomIndex2 = Math.floor(Math.random() * @inputList.length)
                 temporaryValue = chosenPlaylist[randomIndex1]
                 chosenPlaylist[randomIndex1] = chosenPlaylist[randomIndex2]
-                rtrnarr[randomIndex2] = temporaryValue
+                chosenPlaylist[randomIndex2] = temporaryValue
 
 
     _checkHealth:(array)->
-        runningHealth = 0
+        runningHealth = 50
         for i in [0..array.length-1]
             current = array[i]
             ###Check Previous ###
             if(i!=0)
-                runningHealth = runningHealth + @_getHealthAtDepth(array,i,1,1)
+                runningHealth = runningHealth + @_getHealthAtDepth(array,i,2,1)
             ###Check 2 ago ###
             if(i>=2)
-                runningHealth = runningHealth + @_getHealthAtDepth(array,i,.5,2)
+                runningHealth = runningHealth + @_getHealthAtDepth(array,i,1,2)
             ###Check 3 ago ###
             if(i>=3)
-                runningHealth = runningHealth + @_getHealthAtDepth(array,i,.2,3)
+                runningHealth = runningHealth + @_getHealthAtDepth(array,i,.5,3)
+            if(i>=4)
+                runningHealth = runningHealth + @_getHealthAtDepth(array,i,.2,4)
+            if(i>=5)
+                runningHealth = runningHealth + @_getHealthAtDepth(array,i,.1,5)
+            if(i>=6)
+                runningHealth = runningHealth + @_getHealthAtDepth(array,i,.05,6)
+            if(i>=7)
+                runningHealth = runningHealth + @_getHealthAtDepth(array,i,.01,7)
+            if(i>=8)
+                runningHealth = runningHealth + @_getHealthAtDepth(array,i,.001,8)
         return runningHealth
 
     _getHealthAtDepth:(array, index, mulitplier, depth)->

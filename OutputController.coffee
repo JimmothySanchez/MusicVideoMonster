@@ -1,5 +1,4 @@
 $(document).ready(()->
-    seriously = new Seriously()
 
     ###Global Vars###
     video1 = $('#video1')

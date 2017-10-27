@@ -49,9 +49,6 @@
                   <article class="media">
                     <figure class="media-left">
                       {{$index}}
-                      <!-- <p class="image is-64x64">
-                        <img src="http://bulma.io/images/placeholders/128x128.png"> 
-                      </p> -->
                     </figure>
                     <div class="media-content">
                       <div class="content">
@@ -66,30 +63,14 @@
                     </div>
                   </article>
                 </div>
-                <!-- <div class="box">
-                  {{file.Name}}
-                  <a ng-click="LoadVideo(file.Path)" class="button">Play</a>
-                </div> -->
               </li>
             </ul>
-            <!-- <a class="panel-block" ng-click="LoadVideo(file.Path)" ng-repeat="file in fileList">{{file.Name}}</a> -->
           </nav>
         </div>
         <div class="column" ng-show="fileList.length <=0 ">
             <a class="button is-info" ng-click="loadFromdirectory()">Load files from directory</a>
             <a class="button is-info" ng-click="loadFromJSON()">Load files from JSON</a>
         </div>
-        <!-- <div class="column is-one-third">
-          <nav class="panel">
-            <p class="panel-heading">
-              Videos:
-            </p>
-            <ul dnd-list="PlayList">
-              <li ng-repeat="file in fileList" dnd-draggable="file" dnd-moved="fileList.splice($index, 1)" dnd-effect-allowed="move" ng-class="{'selected': selectedVideo == file}">
-                </li>
-            </ul>
-            </nav>
-        </div> -->
         <div class="column is-one-third">
           <nav class="panel">
             <p class="panel-heading">
@@ -156,6 +137,7 @@
               <div class="control">
                 <a class="button" ng-click="save()">save</a>
                 <a class="button" ng-click="genSort()">Randomize</a>
+                <a class="button" ng-click="scanEffect()"></a>
               </div>
             </div>
             <!--                   <p class="panel-heading">
@@ -188,6 +170,10 @@
       <a ng-click="sendEffect('invert')">invert</a> -->
 
 </body>
+<script src="lib/seriously.js"></script>
+<script src="lib/effects/seriously.vignette.js"></script>
+<script src="lib/effects/seriously.pixelate.js"></script>
+<script src="lib/effects/seriously.ascii.js"></script>
 <script src="node_modules/angular/angular.js"></script>
 <script src="node_modules/angular-drag-and-drop-lists/angular-drag-and-drop-lists.js"></script>
 <script src="GeneticSort.js"></script>

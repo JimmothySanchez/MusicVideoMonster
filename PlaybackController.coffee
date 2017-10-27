@@ -9,6 +9,7 @@ app.controller('PlaybackController',($scope)->
     ##$scope.PlayList = []
     $scope.fileList =[]
     $scope.Test = "This is stills a test"
+    seriously = new Seriously()
 
     $scope.fullScreen = ()->
         ipcRenderer.send('video-param', JSON.parse('{"fullscreen":true}'))
@@ -91,6 +92,19 @@ app.controller('PlaybackController',($scope)->
             effect:
                 type:name
         ipcRenderer.send('video-param',param)
+
+    $scope.scanEffect = ()->
+        vignette =seriously.effect("vignette")
+        console.log(seriously)
+        console.log(vignette.inputs())
+        ###fs.readFile('lib/effects/seriously.checkerboard.js', 'utf-8', (err, data) => 
+            if(err)
+                alert("What went wrong: "+ err.message)
+                return
+            console.log(data)
+            tempEffect = JSON.parse(data)
+            console.log(tempEffect)
+        ) ###
 
     updatePlayingVieoUI = (video)->
         if($scope.playingVideo)
