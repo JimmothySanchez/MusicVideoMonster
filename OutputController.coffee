@@ -24,6 +24,8 @@ $(document).ready(()->
     fadeOutTime = 5000
     tickInterval = 100
 
+    effectPlugins = []
+
 
 
     debug = ()->
@@ -47,7 +49,12 @@ $(document).ready(()->
         activeVideoIndex =2
         inTransition = true
 
-
+    setUpEffectPlugins = (inNode,outNode)->
+        ascii = seriously.effect("ascii")
+        effectPlugins.push(ascii)
+        ascii.off()
+        ascii.source = inNode
+        outNode.source =ascii
 
     init = ()->
         video1[0].playbackRate = 1
@@ -60,9 +67,10 @@ $(document).ready(()->
         blend.bottom = seriously.source('#video1')
         blend.top = seriously.source('#video2')
 
+        setUpEffectPlugins(vignette,reformat)
         vignette.source = blend
-        reformat.source = vignette
-        #effectList.push(vin)
+        ##reformat.source = vignette
+        ##effectList.push(vin)
         #reformat.source = blend
         target.source = reformat;
         seriously.go()

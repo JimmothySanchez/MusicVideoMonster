@@ -96,7 +96,10 @@ app.controller('PlaybackController',($scope)->
     $scope.scanEffect = ()->
         vignette =seriously.effect("vignette")
         console.log(seriously)
+        console.log(vignette)
         console.log(vignette.inputs())
+        console.log(vignette.effect)
+        console.log(vignette.getEffect())
         ###fs.readFile('lib/effects/seriously.checkerboard.js', 'utf-8', (err, data) => 
             if(err)
                 alert("What went wrong: "+ err.message)
