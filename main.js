@@ -83,6 +83,14 @@ ipcMain.on('request-video', (event, arg) => {
   mainWindow.send('request-video', arg)
 })
 
+ipcMain.on('effect-params', (event, arg) => {
+  mainWindow.send('effect-params', arg)
+})
+
+ipcMain.on('change-effect', (event, arg) => {
+  videoWindow.send('change-effect', arg)
+})
+
 ipcMain.on('video-param', (event, arg) => {
   console.log('param:' +arg)  // prints "ping"
   if(arg.fullscreen == true)

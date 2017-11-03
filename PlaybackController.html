@@ -138,6 +138,17 @@
                 <a class="button" ng-click="save()">save</a>
                 <a class="button" ng-click="genSort()">Randomize</a>
                 <a class="button" ng-click="scanEffect()"></a>
+<!--                 <a class="button" ng-click="ascii(true)">on</a>
+                <a class="button" ng-click="ascii(false)">off</a> -->
+                <select ng-model="currentEffect" ng-change="UpdateEffect()">
+                  <option value="None">None</option>
+                  <option value="ascii">Ascii</option>
+                  <option value="hex">Hex</option>
+                  <option value="invert">Invert</option>
+                  <option value="sketch">Sketch</option>
+                  <option value="kaleidoscope">Kaleidoscope</option>
+                  <option value="nightvision">nightvision</option>
+                </select>
               </div>
             </div>
             <!--                   <p class="panel-heading">

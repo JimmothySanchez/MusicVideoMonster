@@ -24,7 +24,8 @@ $(document).ready(()->
     fadeOutTime = 5000
     tickInterval = 100
 
-    effectPlugins = []
+    effectPlugins = {}
+    currentEffect=null
 
 
 
@@ -50,11 +51,29 @@ $(document).ready(()->
         inTransition = true
 
     setUpEffectPlugins = (inNode,outNode)->
-        ascii = seriously.effect("ascii")
-        effectPlugins.push(ascii)
-        ascii.off()
-        ascii.source = inNode
-        outNode.source =ascii
+        initEffect("ascii")
+        initEffect("hex")
+        initEffect("invert")
+        initEffect("sketch")
+        initEffect("kaleidoscope")
+        initEffect("nightvision")
+
+        pluginParams =[]
+        for plugin in effectPlugins
+            pluginParams.push(
+                Name: plugin.effect
+                Params: plugin.inputs()
+            )
+        ipcRenderer.send('effect-params', pluginParams)     
+
+    initEffect = (effectName)->
+        temp = seriously.effect(effectName)
+        effectPlugins[temp.effect] = temp
+        ##effectPlugins.push(temp)
+        ##temp.on(temp.effect+'-on')
+        ##temp.off((temp.effect+'-off'))
+        temp.source = blend
+        return temp
 
     init = ()->
         video1[0].playbackRate = 1
@@ -69,11 +88,10 @@ $(document).ready(()->
 
         setUpEffectPlugins(vignette,reformat)
         vignette.source = blend
-        ##reformat.source = vignette
-        ##effectList.push(vin)
-        #reformat.source = blend
         target.source = reformat;
+        reformat.source = vignette
         seriously.go()
+        
         window.setInterval(onTick,tickInterval)
         setTimeout(startGlitch, 10000+Math.random()*60000)
 
@@ -114,12 +132,23 @@ $(document).ready(()->
             )
     )
 
+    ipcRenderer.on('change-effect', (event, arg) => 
+        console.log(arg)
+        if(arg.Name == 'None')
+            currentEffect = null
+            vignette.source=blend
+        else
+            if(currentEffect ==null || currentEffect.effect != arg.Name)
+                currentEffect = effectPlugins[arg.Name]
+                vignette.source = currentEffect
+            if(arg.field)
+                currentEffect[arg.field] = arg.value
+    )
+
     checkDurationContitions=()->
         if(durationCheck)
             if(activeVideoIndex ==1)
                 if(video1[0].duration-video1[0].currentTime<=fadeOutTime/1000)
-                    console.log video1[0].duration
-                    console.log video1[0].currentTime
                     ipcRenderer.send('request-video', true)
                     durationCheck = false
             else
@@ -130,7 +159,6 @@ $(document).ready(()->
     startGlitch=()->
         tvGlitch = seriously.effect('tvglitch')
         tvGlitch.source =vignette
-        reformat.source =tvGlitch
         setTimeout(endGlitch, Math.random()*1000)
 
     endGlitch=()->

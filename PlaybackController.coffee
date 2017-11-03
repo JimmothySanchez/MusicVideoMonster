@@ -109,6 +109,7 @@ app.controller('PlaybackController',($scope)->
             console.log(tempEffect)
         ) ###
 
+
     updatePlayingVieoUI = (video)->
         if($scope.playingVideo)
             $scope.playingVideo.playing = null
@@ -130,6 +131,21 @@ app.controller('PlaybackController',($scope)->
             console.log(e)
             alert('Failed to save the file !')
 
+    $scope.ascii=(bit)->
+        if(bit)
+            ipcRenderer.send('change-effect', 
+                Name: "ascii"
+            )
+        else
+            ipcRenderer.send('change-effect', 
+                Name: "None"
+            )
+
+     $scope.UpdateEffect = ()->
+        ipcRenderer.send('change-effect', 
+            Name: $scope.currentEffect
+        )
+
     $scope.playNext=()->
         console.log('vieo over')
         nextvideo =  $scope.fileList[$scope.fileList.indexOf($scope.playingVideo)+1]
@@ -138,5 +154,9 @@ app.controller('PlaybackController',($scope)->
 
     ipcRenderer.on('request-video', (event, arg) =>
         $scope.playNext()
+    )
+
+    ipcRenderer.on('effect-params', (event, arg) =>
+        console.log(arg)
     )
 )
