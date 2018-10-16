@@ -18,13 +18,13 @@ function createMainWindow () {
 
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'PlaybackController.html'),
+    pathname: path.join(__dirname, 'PlaybackControlsReskin.html'),
     protocol: 'file:',
     slashes: true
   }))
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  //mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -47,7 +47,7 @@ function createVideoWindow () {
   }))
 
   // Open the DevTools.
-  videoWindow.webContents.openDevTools()
+  //videoWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   videoWindow.on('closed', function () {
@@ -77,6 +77,14 @@ ipcMain.on('video-load', (event, arg) => {
 
 ipcMain.on('stage-video', (event, arg) => {
   videoWindow.send('stage-video', arg)
+})
+
+ipcMain.on('pause-playback', (event, arg) => {
+  videoWindow.send('pause-playback', arg)
+})
+
+ipcMain.on('play', (event, arg) => {
+  videoWindow.send('play', arg)
 })
 
 ipcMain.on('request-video', (event, arg) => {

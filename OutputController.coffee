@@ -112,6 +112,22 @@ $(document).ready(()->
         )
     )
 
+    ipcRenderer.on('pause-playback', (event, arg) => 
+        console.log('pause')
+        if(activeVideoIndex ==1)
+            video1[0].pause()
+        else
+            video2[0].pause()
+    )
+
+    ipcRenderer.on('play', (event, arg) => 
+        console.log('pause')
+        if(activeVideoIndex ==1)
+            video1[0].play()
+        else
+            video2[0].play()
+    )
+
     ipcRenderer.on('stage-video', (event, arg) => 
         console.log('staging')
         transitionWindow()

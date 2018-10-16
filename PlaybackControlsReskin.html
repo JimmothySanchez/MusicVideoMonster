@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html ng-app="Monster-App">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+  <title>Playback Controls</title>
+
+  <!-- Bootstrap -->
+  <link href="node_modules/mini.css/dist/mini-dark.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.css">
+</head>
+
+<body>
+  <h1>Music Video Monster
+    <small> Halloween 2018 Build</small>
+  </h1>
+  <div ng-controller="PlaybackController">
+
+    <div class="container load-files" ng-show="fileList.length <=0">
+      <form>
+        <fieldset>
+          <legend>Load files</legend>
+          <div class="row">
+            <label for="directory-input">Music Video Folder:
+              <input type="file" placeholder="directory" id="directory-input" webkitdirectory ng-model="videoDirectory" />
+            </label>
+          </div>
+          <div class="row">
+            <div class="col-sm-3">
+              <a class="button" ng-click="loadFromdirectory()">Load files from directory</a>
+            </div>
+            <div class="col-sm-3">
+              <a class="button" ng-click="loadFromJSON()">Load files from previous save</a>
+            </div>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+
+    <div class="container controls" ng-show="fileList.length >=0">
+      <div class="row">
+        <div class="col-sm-1">
+          <a class="button"><i class="fa fa-step-backward" aria-hidden="true" ng-click="playPrevious()"></i></a>
+        </div>
+        <div class="col-sm-1">
+          <a class="button"><i class="fa fa-play" aria-hidden="true" ng-click="play()"></i></a>
+        </div>
+        <div class="col-sm-1">
+          <a class="button"><i class="fa fa-pause" aria-hidden="true" ng-click="pausePlayback()"></i></a>
+        </div>
+        <div class="col-sm-1">
+          <a class="button"><i class="fa fa-step-forward" aria-hidden="true" ng-click="playNext()"></i></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container file-list">
+      <div ng-repeat="file in fileList" dnd-draggable="file" dnd-moved="fileList.splice($index, 1)" dnd-effect-allowed="move"
+        ng-class="{'selected': selectedVideo == file}">
+        <div class="notification" ng-class="{'is-info': file.selected}" ng-click="selectRecord(file)">
+          {{$index}}
+          <strong>{{file.BandName}}</strong>: <small>{{file.SongName}}</small>
+        </div>
+        <div>
+          <a class="button  is-success" id="btnPlay"><i class="fa fa-play" aria-hidden="true" ng-click="PlayVideo(file)"></i></a>
+        </div>
+        </article>
+      </div>
+    </div>
+
+  </div>
+  </div>
+</body>
+<script src="lib/seriously.js"></script>
+<script src="lib/effects/seriously.vignette.js"></script>
+<script src="lib/effects/seriously.pixelate.js"></script>
+<script src="lib/effects/seriously.ascii.js"></script>
+<script src="node_modules/angular/angular.js"></script>
+<script src="node_modules/angular-drag-and-drop-lists/angular-drag-and-drop-lists.js"></script>
+<script src="GeneticSort.js"></script>
+<script src="PlaybackController.js"></script>
+
+</html>

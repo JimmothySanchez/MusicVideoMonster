@@ -9,6 +9,7 @@ app.controller('PlaybackController',($scope)->
     ##$scope.PlayList = []
     $scope.fileList =[]
     $scope.Test = "This is stills a test"
+    $scope.videoDirectory = "G:\\Projects\\YoutubeDownload"
     seriously = new Seriously()
 
     $scope.fullScreen = ()->
@@ -46,12 +47,13 @@ app.controller('PlaybackController',($scope)->
     $scope.loadFromdirectory = ()->
         $scope.Clearlist()
         ##$scope.fileList.push({"Name":i,"Path":i}) for i in [1..10]
-        fs.readdir('G:\\Projects\\YoutubeDownload', (err, dir) =>
+        fs.readdir($scope.videoDirectory, (err, dir) =>
             angular.forEach(dir, (value,key)->
                 $scope.addRecord(value);
             )
             $scope.$apply();
         )
+
     $scope.RemoveSelectedRecord = ()->
         $scope.fileList.pop($scope.selectedVideo)
         index = $scope.fileList.indexOf($scope.selectedVideo)
@@ -147,10 +149,21 @@ app.controller('PlaybackController',($scope)->
         )
 
     $scope.playNext=()->
-        console.log('vieo over')
         nextvideo =  $scope.fileList[$scope.fileList.indexOf($scope.playingVideo)+1]
         ipcRenderer.send('stage-video', nextvideo)
         updatePlayingVieoUI(nextvideo)
+    
+    $scope.playPrevious=()->
+        nextvideo =  $scope.fileList[$scope.fileList.indexOf($scope.playingVideo)-1]
+        ipcRenderer.send('stage-video', nextvideo)
+        updatePlayingVieoUI(nextvideo)
+
+    $scope.pausePlayback=()->
+        console.log('pause click event')
+        ipcRenderer.send('pause-playback',null)
+
+    $scope.play=()->
+        ipcRenderer.send('play',null)
 
     ipcRenderer.on('request-video', (event, arg) =>
         $scope.playNext()
